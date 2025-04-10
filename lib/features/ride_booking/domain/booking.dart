@@ -6,12 +6,11 @@ part 'booking.freezed.dart';
 @freezed
 class Booking with _$Booking {
   const factory Booking({
-    required LatLng pickupLocation,
-    required String pickupAddress,
-    required LatLng destinationLocation,
-    required String destinationAddress,
-    required int passengerCount,
-    required DateTime dateTime,
+    LatLng? pickupLocation,
+    String? pickupAddress,
+    LatLng? destinationLocation,
+    String? destinationAddress,
+    int? passengerCount,
+    DateTime? dateTime,
   }) = _Booking;
-
 }

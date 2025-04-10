@@ -42,10 +42,10 @@ class RideBookingCubit extends Cubit<RideBookingState> {
             data: Booking(
               pickupLocation: location,
               pickupAddress: address,
-              destinationLocation: bookingData?.destinationLocation ?? const LatLng(0, 0),
-              destinationAddress: bookingData?.destinationAddress ?? '',
-              passengerCount: bookingData?.passengerCount ?? 1,
-              dateTime: bookingData?.dateTime ?? DateTime.now(),
+              destinationLocation: bookingData?.destinationLocation,
+              destinationAddress: bookingData?.destinationAddress,
+              passengerCount: bookingData?.passengerCount,
+              dateTime: bookingData?.dateTime,
             ),
           ),
         ),
@@ -64,12 +64,12 @@ class RideBookingCubit extends Cubit<RideBookingState> {
         state.copyWith(
           currentBooking: booking.copyWith(
             data: Booking(
-              pickupLocation: bookingData?.pickupLocation ?? const LatLng(0, 0),
-              pickupAddress: bookingData?.pickupAddress ?? '',
+              pickupLocation: bookingData?.pickupLocation,
+              pickupAddress: bookingData?.pickupAddress,
               destinationLocation: location,
               destinationAddress: address,
-              passengerCount: bookingData?.passengerCount ?? 1,
-              dateTime: bookingData?.dateTime ?? DateTime.now(),
+              passengerCount: bookingData?.passengerCount,
+              dateTime: bookingData?.dateTime,
             ),
           ),
         ),
@@ -86,12 +86,12 @@ class RideBookingCubit extends Cubit<RideBookingState> {
       state.copyWith(
         currentBooking: booking.copyWith(
           data: Booking(
-            pickupLocation: bookingData?.pickupLocation ?? const LatLng(0, 0),
-            pickupAddress: bookingData?.pickupAddress ?? '',
-            destinationLocation: bookingData?.destinationLocation ?? const LatLng(0, 0),
-            destinationAddress: bookingData?.destinationAddress ?? '',
+            pickupLocation: bookingData?.pickupLocation,
+            pickupAddress: bookingData?.pickupAddress,
+            destinationLocation: bookingData?.destinationLocation,
+            destinationAddress: bookingData?.destinationAddress,
             passengerCount: count,
-            dateTime: bookingData?.dateTime ?? DateTime.now(),
+            dateTime: bookingData?.dateTime,
           ),
         ),
       ),
@@ -105,11 +105,11 @@ class RideBookingCubit extends Cubit<RideBookingState> {
       state.copyWith(
         currentBooking: booking.copyWith(
           data: Booking(
-            pickupLocation: bookingData?.pickupLocation ?? const LatLng(0, 0),
-            pickupAddress: bookingData?.pickupAddress ?? '',
-            destinationLocation: bookingData?.destinationLocation ?? const LatLng(0, 0),
-            destinationAddress: bookingData?.destinationAddress ?? '',
-            passengerCount: bookingData?.passengerCount ?? 1,
+            pickupLocation: bookingData?.pickupLocation,
+            pickupAddress: bookingData?.pickupAddress,
+            destinationLocation: bookingData?.destinationLocation,
+            destinationAddress: bookingData?.destinationAddress,
+            passengerCount: bookingData?.passengerCount,
             dateTime: dateTime,
           ),
         ),

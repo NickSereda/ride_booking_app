@@ -7,6 +7,7 @@ import 'package:ride_booking_app/core/infrasturcture/router/app_router.dart';
 import 'package:ride_booking_app/features/ride_booking/architecture/cubit/ride_booking_cubit.dart';
 import 'package:ride_booking_app/features/ride_booking/presentation/pages/confirmation_page.dart';
 import 'package:ride_booking_app/features/ride_booking/presentation/pages/map_page.dart';
+import 'package:intl/intl.dart';
 
 class HomePage extends StatefulWidget {
   static const String routeName = '/';
@@ -50,8 +51,17 @@ class _HomePageState extends State<HomePage> {
         final booking = state.currentBooking.data;
         _pickupController.text = booking?.pickupAddress ?? '';
         _destinationController.text = booking?.destinationAddress ?? '';
-        _passengersController.text = booking?.passengerCount.toString() ?? '';
-        _dateTimeController.text = booking?.dateTime.toString() ?? '';
+        _passengersController.text = booking?.passengerCount?.toString() ?? '';
+        final dateTime = booking?.dateTime;
+        final formattedDateTime =
+            dateTime != null ? DateFormat('MMMM d, y HH:mm').format(dateTime) : '';
+        _dateTimeController.text = formattedDateTime;
+        if (state.currentBooking.status == const AsyncStatus.failure()) {
+          DialogService.showErrorSnackBar(
+            context: context,
+            message: state.currentBooking.failure?.message ?? 'An error occurred',
+          );
+        }
       },
       buildWhen: (prevState, nextState) => prevState.currentBooking != nextState.currentBooking,
       builder: (context, state) {
@@ -146,6 +156,7 @@ class _HomePageState extends State<HomePage> {
                         AppRouter.goNamed(context, ConfirmationPage.routeName);
                       }
                     },
+                    style: ElevatedButton.styleFrom(minimumSize: const Size(double.infinity, 50)),
                     child: const Text('Continue'),
                   ),
                 ],

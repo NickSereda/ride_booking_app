@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:ride_booking_app/features/ride_booking/architecture/cubit/ride_booking_cubit.dart';
 
 class BookingsPage extends StatelessWidget {
@@ -21,7 +22,7 @@ class BookingsPage extends StatelessWidget {
               return ListTile(
                 title: Text('From: ${booking.pickupAddress}'),
                 subtitle: Text('To: ${booking.destinationAddress}'),
-                trailing: Text(booking.dateTime.toString()),
+                trailing: Text(DateFormat('MMMM d, y HH:mm').format(booking.dateTime!)),
               );
             },
           );
