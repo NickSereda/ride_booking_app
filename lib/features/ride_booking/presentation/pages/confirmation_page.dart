@@ -4,10 +4,9 @@ import 'package:go_router/go_router.dart';
 import 'package:ride_booking_app/core/domain/async_state/async_state.dart';
 import 'package:ride_booking_app/core/infrasturcture/dialog_service/dialog_service.dart';
 import 'package:ride_booking_app/features/ride_booking/architecture/cubit/ride_booking_cubit.dart';
-import 'package:ride_booking_app/features/ride_booking/presentation/pages/bookings_page.dart';
 
 class ConfirmationPage extends StatelessWidget {
-  static const routeName = '/confirmation';
+  static const String routeName = '/confirmation';
 
   const ConfirmationPage({super.key});
 
@@ -16,10 +15,12 @@ class ConfirmationPage extends StatelessWidget {
     return BlocConsumer<RideBookingCubit, RideBookingState>(
       listener: (context, state) {
         if (state.currentBooking.status == const AsyncStatus.success()) {
-          DialogService.showFlushBar(context: context, message: 'Booking confirmed!');
-          context.go(BookingsPage.routeName);
+          final shell = StatefulNavigationShell.of(context);
+          // Reset the Home tab stack
+          shell.goBranch(0, initialLocation: true);
+          DialogService.showSnackBar(context: context, message: 'Booking confirmed!');
         } else if (state.currentBooking.status == const AsyncStatus.failure()) {
-          DialogService.showErrorFlushBar(
+          DialogService.showErrorSnackBar(
             context: context,
             message: 'Failed to confirm booking: ${state.currentBooking.failure?.message}',
           );
@@ -43,7 +44,6 @@ class ConfirmationPage extends StatelessWidget {
                 ElevatedButton(
                   onPressed:
                       isLoading ? null : () => context.read<RideBookingCubit>().submitBooking(),
-                  style: ElevatedButton.styleFrom(minimumSize: const Size(double.infinity, 50)),
                   child:
                       isLoading
                           ? const CircularProgressIndicator(color: Colors.white)

@@ -1,3 +1,4 @@
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:injectable/injectable.dart';
 import 'package:ride_booking_app/features/ride_booking/domain/booking.dart';
 import 'package:ride_booking_app/features/ride_booking/infrastructure/repository/i_ride_booking_repository.dart';
@@ -15,4 +16,10 @@ class DevRideBookingRepository implements IRideBookingRepository {
 
   @override
   Stream<List<Booking>> getBookings() => _bookingsController.stream;
+
+  @override
+  Future<String> getAddressFromLatLng(LatLng location) async {
+    final address = 'Selected Location: ${location.latitude}, ${location.longitude}';
+    return address;
+  }
 }

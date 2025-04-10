@@ -30,53 +30,68 @@ class RideBookingCubit extends Cubit<RideBookingState> {
     return super.close();
   }
 
-  void updatePickupLocation(LatLng location, String address) {
-    emit(
-      state.copyWith(
-        currentBooking: state.currentBooking.copyWith(
-          data: Booking(
-            pickupLocation: location,
-            pickupAddress: address,
-            destinationLocation:
-                state.currentBooking.data?.destinationLocation ?? const LatLng(0, 0),
-            destinationAddress: state.currentBooking.data?.destinationAddress ?? '',
-            passengerCount: state.currentBooking.data?.passengerCount ?? 1,
-            dateTime: state.currentBooking.data?.dateTime ?? DateTime.now(),
+  Future<void> updatePickupLocation(LatLng location) async {
+    try {
+      final address = await _repository.getAddressFromLatLng(location);
+      final booking = state.currentBooking;
+      final bookingData = state.currentBooking.data;
+
+      emit(
+        state.copyWith(
+          currentBooking: booking.copyWith(
+            data: Booking(
+              pickupLocation: location,
+              pickupAddress: address,
+              destinationLocation: bookingData?.destinationLocation ?? const LatLng(0, 0),
+              destinationAddress: bookingData?.destinationAddress ?? '',
+              passengerCount: bookingData?.passengerCount ?? 1,
+              dateTime: bookingData?.dateTime ?? DateTime.now(),
+            ),
           ),
         ),
-      ),
-    );
+      );
+    } catch (e) {
+      emit(state.copyWith(currentBooking: AsyncState.failure(Failure.general(e.toString()))));
+    }
   }
 
-  void updateDestinationLocation(LatLng location, String address) {
-    emit(
-      state.copyWith(
-        currentBooking: state.currentBooking.copyWith(
-          data: Booking(
-            pickupLocation: state.currentBooking.data?.pickupLocation ?? const LatLng(0, 0),
-            pickupAddress: state.currentBooking.data?.pickupAddress ?? '',
-            destinationLocation: location,
-            destinationAddress: address,
-            passengerCount: state.currentBooking.data?.passengerCount ?? 1,
-            dateTime: state.currentBooking.data?.dateTime ?? DateTime.now(),
+  Future<void> updateDestinationLocation(LatLng location) async {
+    try {
+      final address = await _repository.getAddressFromLatLng(location);
+      final booking = state.currentBooking;
+      final bookingData = state.currentBooking.data;
+      emit(
+        state.copyWith(
+          currentBooking: booking.copyWith(
+            data: Booking(
+              pickupLocation: bookingData?.pickupLocation ?? const LatLng(0, 0),
+              pickupAddress: bookingData?.pickupAddress ?? '',
+              destinationLocation: location,
+              destinationAddress: address,
+              passengerCount: bookingData?.passengerCount ?? 1,
+              dateTime: bookingData?.dateTime ?? DateTime.now(),
+            ),
           ),
         ),
-      ),
-    );
+      );
+    } catch (e) {
+      emit(state.copyWith(currentBooking: AsyncState.failure(Failure.general(e.toString()))));
+    }
   }
 
   void updatePassengerCount(int count) {
+    final booking = state.currentBooking;
+    final bookingData = state.currentBooking.data;
     emit(
       state.copyWith(
-        currentBooking: state.currentBooking.copyWith(
+        currentBooking: booking.copyWith(
           data: Booking(
-            pickupLocation: state.currentBooking.data?.pickupLocation ?? const LatLng(0, 0),
-            pickupAddress: state.currentBooking.data?.pickupAddress ?? '',
-            destinationLocation:
-                state.currentBooking.data?.destinationLocation ?? const LatLng(0, 0),
-            destinationAddress: state.currentBooking.data?.destinationAddress ?? '',
+            pickupLocation: bookingData?.pickupLocation ?? const LatLng(0, 0),
+            pickupAddress: bookingData?.pickupAddress ?? '',
+            destinationLocation: bookingData?.destinationLocation ?? const LatLng(0, 0),
+            destinationAddress: bookingData?.destinationAddress ?? '',
             passengerCount: count,
-            dateTime: state.currentBooking.data?.dateTime ?? DateTime.now(),
+            dateTime: bookingData?.dateTime ?? DateTime.now(),
           ),
         ),
       ),
@@ -84,16 +99,17 @@ class RideBookingCubit extends Cubit<RideBookingState> {
   }
 
   void updateDateTime(DateTime dateTime) {
+    final booking = state.currentBooking;
+    final bookingData = state.currentBooking.data;
     emit(
       state.copyWith(
-        currentBooking: state.currentBooking.copyWith(
+        currentBooking: booking.copyWith(
           data: Booking(
-            pickupLocation: state.currentBooking.data?.pickupLocation ?? const LatLng(0, 0),
-            pickupAddress: state.currentBooking.data?.pickupAddress ?? '',
-            destinationLocation:
-                state.currentBooking.data?.destinationLocation ?? const LatLng(0, 0),
-            destinationAddress: state.currentBooking.data?.destinationAddress ?? '',
-            passengerCount: state.currentBooking.data?.passengerCount ?? 1,
+            pickupLocation: bookingData?.pickupLocation ?? const LatLng(0, 0),
+            pickupAddress: bookingData?.pickupAddress ?? '',
+            destinationLocation: bookingData?.destinationLocation ?? const LatLng(0, 0),
+            destinationAddress: bookingData?.destinationAddress ?? '',
+            passengerCount: bookingData?.passengerCount ?? 1,
             dateTime: dateTime,
           ),
         ),

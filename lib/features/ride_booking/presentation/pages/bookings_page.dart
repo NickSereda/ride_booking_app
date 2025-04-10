@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ride_booking_app/features/ride_booking/architecture/cubit/ride_booking_cubit.dart';
 
 class BookingsPage extends StatelessWidget {
-  static const routeName = '/bookings';
+  static const String routeName = '/bookings';
 
   const BookingsPage({super.key});
 

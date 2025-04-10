@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:ride_booking_app/core/domain/async_state/async_state.dart';
 import 'package:ride_booking_app/core/infrasturcture/dialog_service/dialog_service.dart';
+import 'package:ride_booking_app/core/infrasturcture/router/app_router.dart';
 import 'package:ride_booking_app/features/ride_booking/architecture/cubit/ride_booking_cubit.dart';
 import 'package:ride_booking_app/features/ride_booking/presentation/pages/confirmation_page.dart';
 import 'package:ride_booking_app/features/ride_booking/presentation/pages/map_page.dart';
 
 class HomePage extends StatefulWidget {
-  static const routeName = '/';
+  static const String routeName = '/';
 
   const HomePage({super.key});
 
@@ -69,12 +71,16 @@ class _HomePageState extends State<HomePage> {
                       border: OutlineInputBorder(),
                       hintText: 'Select pickup',
                     ),
-                    onTap: () => context.pushNamed(
-                      MapsPage.routeName,
-                      queryParameters: {MapsPage.isPickupParam: 'true'},
-                    ),
-                    validator: (value) =>
-                    (value == null || value.isEmpty) ? 'Please select pickup location' : null,
+                    onTap:
+                        () => context.pushNamed(
+                          MapsPage.routeName,
+                          queryParameters: {MapsPage.isPickupParam: 'true'},
+                        ),
+                    validator:
+                        (value) =>
+                            (value == null || value.isEmpty)
+                                ? 'Please select pickup location'
+                                : null,
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
@@ -85,12 +91,14 @@ class _HomePageState extends State<HomePage> {
                       border: OutlineInputBorder(),
                       hintText: 'Select destination',
                     ),
-                    onTap: () => context.pushNamed(
-                      MapsPage.routeName,
-                      queryParameters: {MapsPage.isPickupParam: 'false'},
-                    ),
-                    validator: (value) =>
-                    (value == null || value.isEmpty) ? 'Please select destination' : null,
+                    onTap:
+                        () => context.pushNamed(
+                          MapsPage.routeName,
+                          queryParameters: {MapsPage.isPickupParam: 'false'},
+                        ),
+                    validator:
+                        (value) =>
+                            (value == null || value.isEmpty) ? 'Please select destination' : null,
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
@@ -121,22 +129,23 @@ class _HomePageState extends State<HomePage> {
                       border: OutlineInputBorder(),
                       hintText: 'Select date and time',
                     ),
-                    onTap: () => DialogService.selectDateTime(context: context).then((dateTime) {
-                      if (dateTime != null && context.mounted) {
-                        context.read<RideBookingCubit>().updateDateTime(dateTime);
-                      }
-                    }),
-                    validator: (value) =>
-                    (value == null || value.isEmpty) ? 'Please select date and time' : null,
+                    onTap:
+                        () => DialogService.selectDateTime(context: context).then((dateTime) {
+                          if (dateTime != null && context.mounted) {
+                            context.read<RideBookingCubit>().updateDateTime(dateTime);
+                          }
+                        }),
+                    validator:
+                        (value) =>
+                            (value == null || value.isEmpty) ? 'Please select date and time' : null,
                   ),
                   const Spacer(),
                   ElevatedButton(
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
-                        context.push(ConfirmationPage.routeName);
+                        AppRouter.goNamed(context, ConfirmationPage.routeName);
                       }
                     },
-                    style: ElevatedButton.styleFrom(minimumSize: const Size(double.infinity, 50)),
                     child: const Text('Continue'),
                   ),
                 ],
