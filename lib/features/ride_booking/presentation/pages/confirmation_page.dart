@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 import 'package:ride_booking_app/core/domain/async_state/async_state.dart';
 import 'package:ride_booking_app/core/infrasturcture/dialog_service/dialog_service.dart';
 import 'package:ride_booking_app/features/ride_booking/architecture/cubit/ride_booking_cubit.dart';
+import 'package:ride_booking_app/features/ride_booking/presentation/widgets/booking_details_widget.dart';
 
 class ConfirmationPage extends StatelessWidget {
   static const String routeName = '/confirmation';
@@ -34,22 +34,28 @@ class ConfirmationPage extends StatelessWidget {
           body: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Pickup: ${booking?.pickupAddress}'),
-                Text('Destination: ${booking?.destinationAddress}'),
-                Text('Passengers: ${booking?.passengerCount}'),
-                Text(
-                  'Date: ${booking?.dateTime != null ? DateFormat('MMMM d, y HH:mm').format(booking!.dateTime!) : ''}',
+                BookingDetailsCard(
+                  pickupAddress: booking?.pickupAddress,
+                  destinationAddress: booking?.destinationAddress,
+                  passengerCount: booking?.passengerCount,
+                  dateTime: booking?.dateTime,
                 ),
                 const Spacer(),
-                ElevatedButton(
-                  onPressed:
-                      isLoading ? null : () => context.read<RideBookingCubit>().submitBooking(),
-                  child:
-                      isLoading
-                          ? const CircularProgressIndicator(color: Colors.white)
-                          : const Text('Confirm Booking'),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed:
+                        isLoading ? null : () => context.read<RideBookingCubit>().submitBooking(),
+                    child:
+                        isLoading
+                            ? const SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                            : const Text('Confirm Booking'),
+                  ),
                 ),
               ],
             ),
