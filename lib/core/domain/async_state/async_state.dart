@@ -1,5 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:ride_booking_app/core/data/models/failure.dart';
+import 'package:ride_booking_app/core/domain/failure/failure.dart';
 
 part 'async_state.freezed.dart';
 
@@ -8,19 +8,14 @@ part 'async_state.freezed.dart';
 class AsyncState<T> with _$AsyncState<T> {
   const AsyncState._();
 
-  const factory AsyncState({
-    required AsyncStatus status,
-    T? data,
-    Failure? failure,
-  }) = _AsyncState<T>;
+  const factory AsyncState({required AsyncStatus status, T? data, Failure? failure}) =
+      _AsyncState<T>;
 
   /// Creates an [AsyncState] with an initial status.
-  factory AsyncState.initial() =>
-      AsyncState<T>(status: const AsyncStatus.initial());
+  factory AsyncState.initial() => AsyncState<T>(status: const AsyncStatus.initial());
 
   /// Creates an [AsyncState] with a loading status.
-  factory AsyncState.loading() =>
-      AsyncState<T>(status: const AsyncStatus.loading());
+  factory AsyncState.loading() => AsyncState<T>(status: const AsyncStatus.loading());
 
   /// Creates an [AsyncState] with a success status and the given data.
   factory AsyncState.success(T data) =>
