@@ -13,7 +13,6 @@ class MockRideBookingRepository extends Mock implements IRideBookingRepository {
 void main() {
   late MockRideBookingRepository mockRideBookingRepository;
 
-  // Sample data for testing
   final fakeBookings = [
     Booking(
       pickupLocation: const LatLng(40.7128, -74.0060),
@@ -31,12 +30,8 @@ void main() {
 
   setUp(() {
     mockRideBookingRepository = MockRideBookingRepository();
-
-    // Setup stream for getBookings
     when(() => mockRideBookingRepository.getBookings())
         .thenAnswer((_) => Stream.value(fakeBookings));
-
-    // Default success responses with specific mock data
     when(() => mockRideBookingRepository.getAddressFromLatLng(testLatLng))
         .thenAnswer((_) async => testAddress);
     when(() => mockRideBookingRepository.addBooking(fakeBookings.first))
@@ -335,155 +330,113 @@ void main() {
       ],
     );
 
-    // blocTest<RideBookingCubit, RideBookingState>(
-    //   'submitBooking emits loading and success states',
-    //   build: () => RideBookingCubit(mockRideBookingRepository),
-    //   seed: () => RideBookingState.initial().copyWith(
-    //     currentBooking: AsyncState<Booking?>.success(fakeBookings.first),
-    //     bookings: AsyncState.success(fakeBookings),
-    //   ),
-    //   act: (cubit) async => await cubit.submitBooking(),
-    //   expect: () => [
-    //     isA<RideBookingState>()
-    //         .having(
-    //           (s) => s.currentBooking.status,
-    //       'currentBooking.status',
-    //       const AsyncStatus.success(),
-    //     )
-    //         .having(
-    //           (s) => s.currentBooking.data,
-    //       'currentBooking.data',
-    //       fakeBookings.first,
-    //     )
-    //         .having(
-    //           (s) => s.bookings.status,
-    //       'bookings.status',
-    //       const AsyncStatus.success(),
-    //     )
-    //         .having(
-    //           (s) => s.bookings.data,
-    //       'bookings.data',
-    //       fakeBookings,
-    //     ),
-    //     isA<RideBookingState>()
-    //         .having(
-    //           (s) => s.currentBooking.status,
-    //       'currentBooking.status',
-    //       const AsyncStatus.loading(),
-    //     )
-    //         .having(
-    //           (s) => s.bookings.status,
-    //       'bookings.status',
-    //       const AsyncStatus.success(),
-    //     )
-    //         .having(
-    //           (s) => s.bookings.data,
-    //       'bookings.data',
-    //       fakeBookings,
-    //     ),
-    //     isA<RideBookingState>()
-    //         .having(
-    //           (s) => s.currentBooking.status,
-    //       'currentBooking.status',
-    //       const AsyncStatus.success(),
-    //     )
-    //         .having(
-    //           (s) => s.currentBooking.data,
-    //       'currentBooking.data',
-    //       null,
-    //     )
-    //         .having(
-    //           (s) => s.bookings.status,
-    //       'bookings.status',
-    //       const AsyncStatus.success(),
-    //     )
-    //         .having(
-    //           (s) => s.bookings.data,
-    //       'bookings.data',
-    //       fakeBookings,
-    //     ),
-    //   ],
-    //   verify: (_) {
-    //     verify(() => mockRideBookingRepository.addBooking(fakeBookings.first)).called(1);
-    //   },
-    // );
+    blocTest<RideBookingCubit, RideBookingState>(
+      'submitBooking emits loading and success states',
+      build: () => RideBookingCubit(mockRideBookingRepository),
+      seed: () => RideBookingState.initial().copyWith(
+        currentBooking: AsyncState<Booking?>.success(fakeBookings.first),
+        bookings: AsyncState.success(fakeBookings),
+      ),
+      act: (cubit) async => await cubit.submitBooking(),
+      expect: () => [
+        isA<RideBookingState>()
+            .having(
+              (s) => s.currentBooking.status,
+          'currentBooking.status',
+          const AsyncStatus.loading(),
+        )
+            .having(
+              (s) => s.bookings.status,
+          'bookings.status',
+          const AsyncStatus.success(),
+        )
+            .having(
+              (s) => s.bookings.data,
+          'bookings.data',
+          fakeBookings,
+        ),
+        isA<RideBookingState>()
+            .having(
+              (s) => s.currentBooking.status,
+          'currentBooking.status',
+          const AsyncStatus.success(),
+        )
+            .having(
+              (s) => s.currentBooking.data,
+          'currentBooking.data',
+          null,
+        )
+            .having(
+              (s) => s.bookings.status,
+          'bookings.status',
+          const AsyncStatus.success(),
+        )
+            .having(
+              (s) => s.bookings.data,
+          'bookings.data',
+          fakeBookings,
+        ),
+      ],
+      verify: (_) {
+        verify(() => mockRideBookingRepository.addBooking(fakeBookings.first)).called(1);
+      },
+    );
 
-    // blocTest<RideBookingCubit, RideBookingState>(
-    //   'submitBooking emits loading and failure states when repository fails',
-    //   build: () {
-    //     when(() => mockRideBookingRepository.addBooking(fakeBookings.first))
-    //         .thenThrow(Exception('Booking error'));
-    //     return RideBookingCubit(mockRideBookingRepository);
-    //   },
-    //   seed: () => RideBookingState.initial().copyWith(
-    //     currentBooking: AsyncState<Booking?>.success(fakeBookings.first),
-    //     bookings: AsyncState.success(fakeBookings),
-    //   ),
-    //   act: (cubit) async => await cubit.submitBooking(),
-    //   expect: () => [
-    //     isA<RideBookingState>()
-    //         .having(
-    //           (s) => s.currentBooking.status,
-    //       'currentBooking.status',
-    //       const AsyncStatus.success(),
-    //     )
-    //         .having(
-    //           (s) => s.currentBooking.data,
-    //       'currentBooking.data',
-    //       fakeBookings.first,
-    //     )
-    //         .having(
-    //           (s) => s.bookings.status,
-    //       'bookings.status',
-    //       const AsyncStatus.success(),
-    //     )
-    //         .having(
-    //           (s) => s.bookings.data,
-    //       'bookings.data',
-    //       fakeBookings,
-    //     ),
-    //     isA<RideBookingState>()
-    //         .having(
-    //           (s) => s.currentBooking.status,
-    //       'currentBooking.status',
-    //       const AsyncStatus.loading(),
-    //     )
-    //         .having(
-    //           (s) => s.bookings.status,
-    //       'bookings.status',
-    //       const AsyncStatus.success(),
-    //     )
-    //         .having(
-    //           (s) => s.bookings.data,
-    //       'bookings.data',
-    //       fakeBookings,
-    //     ),
-    //     isA<RideBookingState>()
-    //         .having(
-    //           (s) => s.currentBooking.status,
-    //       'currentBooking.status',
-    //       const AsyncStatus.failure(),
-    //     )
-    //         .having(
-    //           (s) => s.currentBooking.failure,
-    //       'currentBooking.failure',
-    //       Failure.general('Exception: Booking error'),
-    //     )
-    //         .having(
-    //           (s) => s.bookings.status,
-    //       'bookings.status',
-    //       const AsyncStatus.success(),
-    //     )
-    //         .having(
-    //           (s) => s.bookings.data,
-    //       'bookings.data',
-    //       fakeBookings,
-    //     ),
-    //   ],
-    //   verify: (_) {
-    //     verify(() => mockRideBookingRepository.addBooking(fakeBookings.first)).called(1);
-    //   },
-    // );
+    blocTest<RideBookingCubit, RideBookingState>(
+      'submitBooking emits loading and failure states when repository fails',
+      build: () {
+        when(() => mockRideBookingRepository.addBooking(fakeBookings.first))
+            .thenThrow(Exception('Booking error'));
+        return RideBookingCubit(mockRideBookingRepository);
+      },
+      seed: () => RideBookingState.initial().copyWith(
+        currentBooking: AsyncState<Booking?>.success(fakeBookings.first),
+        bookings: AsyncState.success(fakeBookings),
+      ),
+      act: (cubit) async => await cubit.submitBooking(),
+      expect: () => [
+        isA<RideBookingState>()
+            .having(
+              (s) => s.currentBooking.status,
+          'currentBooking.status',
+          const AsyncStatus.loading(),
+        )
+            .having(
+              (s) => s.bookings.status,
+          'bookings.status',
+          const AsyncStatus.success(),
+        )
+            .having(
+              (s) => s.bookings.data,
+          'bookings.data',
+          fakeBookings,
+        ),
+        isA<RideBookingState>()
+            .having(
+              (s) => s.currentBooking.status,
+          'currentBooking.status',
+          const AsyncStatus.failure(),
+        )
+            .having(
+              (s) => s.currentBooking.failure,
+          'currentBooking.failure',
+          Failure.general('Exception: Booking error'),
+        )
+            .having(
+              (s) => s.bookings.status,
+          'bookings.status',
+          const AsyncStatus.success(),
+        )
+            .having(
+              (s) => s.bookings.data,
+          'bookings.data',
+          fakeBookings,
+        ),
+      ],
+      verify: (_) {
+        verify(() => mockRideBookingRepository.addBooking(fakeBookings.first)).called(1);
+      },
+    );
 
     blocTest<RideBookingCubit, RideBookingState>(
       'submitBooking does nothing when currentBooking.data is null',
