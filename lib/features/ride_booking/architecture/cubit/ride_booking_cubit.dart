@@ -8,7 +8,6 @@ import 'package:ride_booking_app/core/domain/async_state/async_state.dart';
 import 'package:ride_booking_app/core/domain/failure/failure.dart';
 import 'package:ride_booking_app/features/ride_booking/domain/booking.dart';
 import 'package:ride_booking_app/features/ride_booking/infrastructure/repository/i_ride_booking_repository.dart';
-import 'package:rxdart/rxdart.dart';
 
 part 'ride_booking_cubit.freezed.dart';
 
@@ -34,8 +33,8 @@ class RideBookingCubit extends Cubit<RideBookingState> {
   void updatePickupLocation(LatLng location, String address) {
     emit(
       state.copyWith(
-        currentBooking: AsyncState.success(
-          Booking(
+        currentBooking: state.currentBooking.copyWith(
+          data: Booking(
             pickupLocation: location,
             pickupAddress: address,
             destinationLocation:
@@ -52,8 +51,8 @@ class RideBookingCubit extends Cubit<RideBookingState> {
   void updateDestinationLocation(LatLng location, String address) {
     emit(
       state.copyWith(
-        currentBooking: AsyncState.success(
-          Booking(
+        currentBooking: state.currentBooking.copyWith(
+          data: Booking(
             pickupLocation: state.currentBooking.data?.pickupLocation ?? const LatLng(0, 0),
             pickupAddress: state.currentBooking.data?.pickupAddress ?? '',
             destinationLocation: location,
@@ -69,8 +68,8 @@ class RideBookingCubit extends Cubit<RideBookingState> {
   void updatePassengerCount(int count) {
     emit(
       state.copyWith(
-        currentBooking: AsyncState.success(
-          Booking(
+        currentBooking: state.currentBooking.copyWith(
+          data: Booking(
             pickupLocation: state.currentBooking.data?.pickupLocation ?? const LatLng(0, 0),
             pickupAddress: state.currentBooking.data?.pickupAddress ?? '',
             destinationLocation:
@@ -87,8 +86,8 @@ class RideBookingCubit extends Cubit<RideBookingState> {
   void updateDateTime(DateTime dateTime) {
     emit(
       state.copyWith(
-        currentBooking: AsyncState.success(
-          Booking(
+        currentBooking: state.currentBooking.copyWith(
+          data: Booking(
             pickupLocation: state.currentBooking.data?.pickupLocation ?? const LatLng(0, 0),
             pickupAddress: state.currentBooking.data?.pickupAddress ?? '',
             destinationLocation:
@@ -109,7 +108,8 @@ class RideBookingCubit extends Cubit<RideBookingState> {
     emit(state.copyWith(currentBooking: AsyncState.loading()));
     try {
       await _repository.addBooking(booking);
-      emit(state.copyWith(currentBooking: AsyncState.initial()));
+      // Emit success with null data to signal completion
+      emit(state.copyWith(currentBooking: AsyncState.success(null)));
     } catch (e) {
       emit(state.copyWith(currentBooking: AsyncState.failure(Failure.general(e.toString()))));
     }

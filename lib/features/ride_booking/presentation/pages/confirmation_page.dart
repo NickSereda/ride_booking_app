@@ -8,23 +8,26 @@ import 'package:ride_booking_app/features/ride_booking/presentation/pages/bookin
 
 class ConfirmationPage extends StatelessWidget {
   static const routeName = '/confirmation';
+
   const ConfirmationPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<RideBookingCubit, RideBookingState>(
       listener: (context, state) {
-        if (state.currentBooking.status == const AsyncStatus.success() &&
-            state.currentBooking.data?.pickupAddress.isEmpty == true) {
-          DialogService.showFlushBar(
-            context: context,
-            message: 'Booking confirmed!',
-          );
+        if (state.currentBooking.status == const AsyncStatus.success()) {
+          DialogService.showFlushBar(context: context, message: 'Booking confirmed!');
           context.go(BookingsPage.routeName);
+        } else if (state.currentBooking.status == const AsyncStatus.failure()) {
+          DialogService.showErrorFlushBar(
+            context: context,
+            message: 'Failed to confirm booking: ${state.currentBooking.failure?.message}',
+          );
         }
       },
       builder: (context, state) {
         final booking = state.currentBooking.data;
+        final isLoading = state.currentBooking.status == const AsyncStatus.loading();
         return Scaffold(
           appBar: AppBar(title: const Text('Confirm Booking')),
           body: Padding(
@@ -38,8 +41,13 @@ class ConfirmationPage extends StatelessWidget {
                 Text('Date: ${booking?.dateTime}'),
                 const Spacer(),
                 ElevatedButton(
-                  onPressed: () => context.read<RideBookingCubit>().submitBooking(),
-                  child: const Text('Confirm Booking'),
+                  onPressed:
+                      isLoading ? null : () => context.read<RideBookingCubit>().submitBooking(),
+                  style: ElevatedButton.styleFrom(minimumSize: const Size(double.infinity, 50)),
+                  child:
+                      isLoading
+                          ? const CircularProgressIndicator(color: Colors.white)
+                          : const Text('Confirm Booking'),
                 ),
               ],
             ),

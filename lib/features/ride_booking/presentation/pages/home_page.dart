@@ -6,18 +6,53 @@ import 'package:ride_booking_app/features/ride_booking/architecture/cubit/ride_b
 import 'package:ride_booking_app/features/ride_booking/presentation/pages/confirmation_page.dart';
 import 'package:ride_booking_app/features/ride_booking/presentation/pages/map_page.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   static const routeName = '/';
-  static final _formKey = GlobalKey<FormState>();
 
   const HomePage({super.key});
 
   @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  static final _formKey = GlobalKey<FormState>();
+  late final TextEditingController _pickupController;
+  late final TextEditingController _destinationController;
+  late final TextEditingController _passengersController;
+  late final TextEditingController _dateTimeController;
+
+  @override
+  void initState() {
+    super.initState();
+    _pickupController = TextEditingController();
+    _destinationController = TextEditingController();
+    _passengersController = TextEditingController();
+    _dateTimeController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _pickupController.dispose();
+    _destinationController.dispose();
+    _passengersController.dispose();
+    _dateTimeController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return BlocBuilder<RideBookingCubit, RideBookingState>(
+    return BlocConsumer<RideBookingCubit, RideBookingState>(
+      listenWhen: (prevState, nextState) => prevState.currentBooking != nextState.currentBooking,
+      listener: (context, state) {
+        final booking = state.currentBooking.data;
+        _pickupController.text = booking?.pickupAddress ?? '';
+        _destinationController.text = booking?.destinationAddress ?? '';
+        _passengersController.text = booking?.passengerCount.toString() ?? '';
+        _dateTimeController.text = booking?.dateTime.toString() ?? '';
+      },
       buildWhen: (prevState, nextState) => prevState.currentBooking != nextState.currentBooking,
       builder: (context, state) {
-        final booking = state.currentBooking.data;
         return Scaffold(
           appBar: AppBar(title: const Text('Book Ride')),
           body: Padding(
@@ -27,44 +62,39 @@ class HomePage extends StatelessWidget {
               child: Column(
                 children: [
                   TextFormField(
+                    controller: _pickupController,
                     readOnly: true,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: 'Pickup Location',
-                      border: const OutlineInputBorder(),
-                      hintText: booking?.pickupAddress ?? 'Select pickup',
+                      border: OutlineInputBorder(),
+                      hintText: 'Select pickup',
                     ),
-                    onTap:
-                        () => context.pushNamed(
-                          MapsPage.routeName,
-                          queryParameters: {MapsPage.isPickupParam: 'true'},
-                        ),
-                    validator:
-                        (value) =>
-                            booking?.pickupAddress.isEmpty ?? true
-                                ? 'Please select pickup location'
-                                : null,
+                    onTap: () => context.pushNamed(
+                      MapsPage.routeName,
+                      queryParameters: {MapsPage.isPickupParam: 'true'},
+                    ),
+                    validator: (value) =>
+                    (value == null || value.isEmpty) ? 'Please select pickup location' : null,
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
+                    controller: _destinationController,
                     readOnly: true,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: 'Destination',
-                      border: const OutlineInputBorder(),
-                      hintText: booking?.destinationAddress ?? 'Select destination',
+                      border: OutlineInputBorder(),
+                      hintText: 'Select destination',
                     ),
-                    onTap:
-                        () => context.pushNamed(
-                          MapsPage.routeName,
-                          queryParameters: {MapsPage.isPickupParam: 'false'},
-                        ),
-                    validator:
-                        (value) =>
-                            booking?.destinationAddress.isEmpty ?? true
-                                ? 'Please select destination'
-                                : null,
+                    onTap: () => context.pushNamed(
+                      MapsPage.routeName,
+                      queryParameters: {MapsPage.isPickupParam: 'false'},
+                    ),
+                    validator: (value) =>
+                    (value == null || value.isEmpty) ? 'Please select destination' : null,
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
+                    controller: _passengersController,
                     keyboardType: TextInputType.number,
                     decoration: const InputDecoration(
                       labelText: 'Passengers',
@@ -84,22 +114,20 @@ class HomePage extends StatelessWidget {
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
+                    controller: _dateTimeController,
                     readOnly: true,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: 'Date & Time',
-                      border: const OutlineInputBorder(),
-                      hintText: booking?.dateTime.toString() ?? 'Select date and time',
+                      border: OutlineInputBorder(),
+                      hintText: 'Select date and time',
                     ),
-                    onTap:
-                        () => DialogService.selectDateTime(context: context).then((dateTime) {
-                          if (dateTime != null) {
-                            if (context.mounted) {
-                              context.read<RideBookingCubit>().updateDateTime(dateTime);
-                            }
-                          }
-                        }),
-                    validator:
-                        (value) => booking?.dateTime == null ? 'Please select date and time' : null,
+                    onTap: () => DialogService.selectDateTime(context: context).then((dateTime) {
+                      if (dateTime != null && context.mounted) {
+                        context.read<RideBookingCubit>().updateDateTime(dateTime);
+                      }
+                    }),
+                    validator: (value) =>
+                    (value == null || value.isEmpty) ? 'Please select date and time' : null,
                   ),
                   const Spacer(),
                   ElevatedButton(
@@ -108,6 +136,7 @@ class HomePage extends StatelessWidget {
                         context.push(ConfirmationPage.routeName);
                       }
                     },
+                    style: ElevatedButton.styleFrom(minimumSize: const Size(double.infinity, 50)),
                     child: const Text('Continue'),
                   ),
                 ],

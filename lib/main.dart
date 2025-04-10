@@ -6,13 +6,6 @@ import 'package:ride_booking_app/core/infrasturcture/router/app_router.dart';
 import 'package:ride_booking_app/core/presentation/theme/theme.dart';
 import 'package:ride_booking_app/features/ride_booking/architecture/cubit/ride_booking_cubit.dart';
 import 'core/infrasturcture/di/injection.dart';
-import 'dart:js' as js;
-
-// When you need the API key
-String getMapsApiKey() {
-  // Access the window.ENV.MAPS_API_KEY value
-  return js.context['ENV']['MAPS_API_KEY'].toString();
-}
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -30,8 +23,6 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final appRouter = getIt<AppRouter>();
-
-    print('APIKEYMAPS: ${getMapsApiKey()}');
 
     return BlocProvider<RideBookingCubit>(
       create: (_) => GetIt.I<RideBookingCubit>(),
